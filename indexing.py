@@ -3,13 +3,14 @@
 # FILENAME: indexing.py
 # SPECIFICATION: finding document term matrix
 # FOR: CS 4250- Assignment #1
-# TIME SPENT: how long it took you to complete the assignment
+# TIME SPENT: 10 hours
 #-----------------------------------------------------------*/
 
 #IMPORTANT NOTE: DO NOT USE ANY ADVANCED PYTHON LIBRARY TO COMPLETE THIS CODE SUCH AS numpy OR pandas. You have to work here only with standard arrays
 
 #Importing some Python libraries
 import csv
+from collections import Counter
 
 documents = []
 
@@ -32,16 +33,10 @@ for i in range(len(documents)):
   documents[i] = documents[i].split(' ')
   documents1 = list(filter(lambda item: item not in stopWords, documents[i]))
   documents2.append(documents1)
-# print("documents2:",documents2)
+
 #Conducting stemming. Hint: use a dictionary to map word variations to their stem.
 #--> add your Python code here
 steeming = {'cats':'cat','dogs':'dog', 'loves':'love'}
-
-# documents3 = []
-
-for i in range(len(steeming)):
-  key = list(steeming.keys())
-  value = list(steeming.values())
 
 #Replaces the key steeming word with value steeming word by looping through documents2
 documents3 = [
@@ -65,37 +60,40 @@ print("Terms: ",terms)
 #--> add your Python code here
 docTermMatrix = []
 
-# from collections import Counter
-
-# freq_Dic = {}
-# tf = {}
 
 
-# sums = {}
-# for idx, d in enumerate(documents3):
-#     word_counts = Counter(d) #counts words of each row (or document)
-#     freq_tuple = tuple(word_counts.get(w, 0) for w in terms) #creates freq_tuple
-#     freq_Dic[idx] = freq_tuple #addes freq_tuple for each set of rows or documents
-#     sum_value = sum(freq_tuple)
-#     sums[idx] = sum_value
+         
+freq_Dic = {}
+SumPerDoc = []
+freq = {}
+for lit in range(len(documents3)):
+  var = documents3[lit]
+  row = Counter(var) #counts frequency of each doc or row
+  
+  freq_tuple = tuple(row.get(w, 0) for w in terms)
+  freq[lit] = freq_tuple
 
-# for idx, freq_tuple in freq_Dic.items():
-#     print(f"Document {idx}:")
-#     totalInDoc = sums[idx]
-#     for term, frequency in zip(terms, freq_tuple):
-#         print(f"{term}: {frequency}")
-#         print("sums[idx]", sums[idx])
-#         if totalInDoc != 0:
-#           tf[term] = frequency/totalInDoc
-#         else:
-#            tf[term] = 0.0
-#         print(f"TF({term}): {tf[term]}") 
-#     print()
+  freq_Dic[lit] = row.values()
+  SumPerDoc.append(sum(row.values()))
 
-# print(freq_Dic)
-# print(tf)
 
+
+print(SumPerDoc)
+print(freq)
+
+TermLen = len(terms)
+s = len(terms)
+
+NumMatrix = []
+for lit in freq.values():
+  for index in lit:
+    NumMatrix.append(index/SumPerDoc[TermLen-s])
+  s -= 1
 
 
 #Printing the document-term matrix.
 #--> add your Python code here
+
+docTermMatrix = NumMatrix
+
+print(docTermMatrix)
